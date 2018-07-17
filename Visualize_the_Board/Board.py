@@ -14,6 +14,9 @@ from Visualize_the_Board.Data_Conversion.position_of_pieces import conversion_to
 from Visualize_the_Board.Data_Conversion.chess_coords_to_real_coords import convert_coordinates
 from Visualize_the_Board.Data_Conversion.difference_for_letter import promotion_piece
 
+#Just for the Random AI
+import random
+
 class Scatter_Text_widget(Screen):
     #The function of this class is to display a GUI for the user to use when playing against the AI
 
@@ -22,61 +25,67 @@ class Scatter_Text_widget(Screen):
         super(Scatter_Text_widget, self).__init__(**kwargs)
         self.position = find_position()
         self.position_piece = position_dic
+        self.turn = team_turn
 
         #Set the board that is used for the the Algorithm
         self.board = chess.Board()
-        self.turn = team_turn
+
     def on_touch_down(self, touch):
         res = super(Scatter_Text_widget, self).on_touch_down(touch)
 
         if res:
             pos_chess = self.position.chess_position(touch.pos)
+            #Saves the data of where, and what was clicked on
             self.clicked_input = [pos_chess,self.position_piece[str(pos_chess)]]
 
     def on_touch_up(self, touch):
         conversion = convert_coordinates
-        promotion = False
         scatter = Scatter_Text_widget()
-        res = super(Scatter_Text_widget, self).on_touch_up(touch)
-        print(self.turn)
-        if res:
+        self.move_worked = True
 
+        res = super(Scatter_Text_widget, self).on_touch_up(touch)
+
+        if res:
             self.pos_chess = self.position.chess_position(touch.pos)
             list_of_previous_data = str(self.clicked_input)
 
-            #Get the old data
+            #Get the old data, and save it
             self.chess_position_numerical = str(str(list_of_previous_data[2]) + str(list_of_previous_data[3]))
             self.piece_that_moved = ""
             index = 8
             while index != len(list_of_previous_data) -2:
                 self.piece_that_moved += str(list_of_previous_data[index])
                 index += 1
+
+            #Checks to see if the user is allowed to move a piece
             if self.turn % 2 != 0:
+                #The move the user has done
                 move = chess.Move.from_uci("%s" %(str(self.chess_position_numerical) + str(self.pos_chess)))
 
                 #Checks to see if the move is valid
                 is_move_valid = chess.Move.from_uci(str(move)) in self.board.legal_moves
-
                 if is_move_valid == True:
-                    #Variables check for special moves
+                    #Variables check for special moves (Castling and en passant)
                     is_castling = self.board.is_castling(move)
                     king_side_castling = self.board.is_kingside_castling(move)
                     is_en_passant = self.board.is_en_passant(move)
-                    self.turn += 1
+
                     #Updates the board
                     self.board.push(move)
+                    self.turn += 1
 
                     try:
                         #This will capture a piece if there is one to capture
-                        piece_occupied = str(self.position_piece[self.pos_chess])
+                        piece_occupied = str(self.position_piece[str(self.pos_chess)])
 
                         #Deletes the piece that was captured
                         self.ids[piece_occupied].pos = (1000,1000)
-
                     except KeyError:
+                        #If there is nothing to capture then a KeyError is thrown
+                        #But we want to program to continue
                         pass
 
-                    #Checks to see if the move is a castle move
+                    #Executes this code if castling is occuring
                     if is_castling == True:
                         #Checks were the castling is happening, and then moves the correct rook then
                         if king_side_castling == True:
@@ -98,8 +107,8 @@ class Scatter_Text_widget(Screen):
                                 position_dic['a8'] = 'None'
                                 position_dic['d8'] = 'Left Black Rook'
 
+                    #If the move is an en passant this code is executed
                     if is_en_passant == True:
-                        #If the move is an en passant
                         captured_piece_location = str(str(self.pos_chess)[0]) + str(int(str(self.pos_chess)[1]) - 1)
                         piece_occupied = str(self.position_piece[captured_piece_location])
                         self.ids[piece_occupied].pos = (1000,1000)
@@ -110,6 +119,7 @@ class Scatter_Text_widget(Screen):
                     position_dic[str(self.pos_chess)] = str(self.piece_that_moved)
 
                 else:
+                    #Checks to see if a promotion is occuring
                     not_a_promotion = True
                     sc = Scatter_Text_widget()
                     if str(self.pos_chess) == "a8" or str(self.pos_chess) == "b8" or str(self.pos_chess) == "c8" or str(self.pos_chess) == "d8" or str(self.pos_chess) == "e8" or str(self.pos_chess) == "f8" or str(self.pos_chess) == "g8" or str(self.pos_chess) == "h8":
@@ -138,9 +148,9 @@ class Scatter_Text_widget(Screen):
                     if not_a_promotion == True:
                         #If the move was not valid, then move the piece to the starting position
                         self.ids[self.piece_that_moved].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
-
+                        self.move_worked = False
                     else:
-                        self.turn += 1
+                        self.move_worked = False
                         #Adds a floatlayout to the popup
                         float = FloatLayout()
 
@@ -169,9 +179,47 @@ class Scatter_Text_widget(Screen):
             else:
                 #The player cannot move the black pieces
                 self.ids[self.piece_that_moved].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
+                self.move_worked = False
 
             print(self.board)
 
+        else:
+            self.move_worked = False
+
+        if self.move_worked == True:
+            #This is were the AI's inputs is visualized
+            self.board.BLACK = True
+
+            move_number = random.randint(0, len(list(self.board.legal_moves)) - 1)
+            move = list(self.board.legal_moves)[move_number]
+
+            self.board.push(move)
+            self.turn += 1
+            self.board.BLACK = False
+
+            '''
+            What the code does, but in a way for the Algorithm to do:
+            self.ids[self.piece_that_moved].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+
+            position_dic[str(self.chess_position_numerical)] = 'None'
+            position_dic[str(self.pos_chess)] = str(self.piece_that_moved)
+            '''
+            try:
+                piece_occupied = str(self.position_piece[str(str(move)[2] + str(move)[3])])
+                #Deletes the piece that was captured
+                self.ids[piece_occupied].pos = (1000,1000)
+
+            except KeyError:
+                pass
+
+            #Functionality for every move; moving the piece to the correct location and updating the dictionary
+            self.ids[position_dic[str(move)[0] + str(move)[1]]].pos = (conversion.to_number()[str(move)[2] + str(move)[3]][0], conversion.to_number()[str(move)[2] + str(move)[3]][1])
+
+            #The ID of the piece that moved
+            piece = position_dic[str(move)[0] + str(move)[1]]
+
+            position_dic[str(str(move)[0] + str(move)[1])] = 'None'
+            position_dic[str(str(move)[2] + str(move)[3])] = str(piece)
 
     def promotion(self, obj):
         conversion = convert_coordinates
@@ -194,7 +242,6 @@ class Scatter_Text_widget(Screen):
 
         #If the pawn was white
         if self.piece_that_moved[0] == "W":
-
             if promotion_piece == [410,300]:
                 #Turns the pawn into a Queen, Adds the Queen to the dictionary
                 self.ids['Whire Queen'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -202,7 +249,8 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Whire Queen'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=5)
                 self.board.push(move)
-
+                self.move_worked = True
+                self.turn += 1
             elif promotion_piece == [307.5, 400]:
                 #Turns the pawn into a Rook, Adds the Rook to the dictionary
                 self.ids['Ledt White Rook'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -210,7 +258,8 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Ledt White Rook'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=4)
                 self.board.push(move)
-
+                self.move_worked = True
+                self.turn += 1
             elif promotion_piece == [307.5, 300]:
                 #Turns the pawn into a Bishop, Adds the Bishop to the dictionary
                 self.ids['Ledt White Bishop'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -218,7 +267,8 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Ledt White Bishop'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=3)
                 self.board.push(move)
-
+                self.move_worked = True
+                self.turn += 1
             elif promotion_piece == [410, 400]:
                 #Turns the pawn into a Knight, Adds the Knight to the dictionary
                 self.ids['Ledt White Knight'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -226,11 +276,11 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Ledt White Knight'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=2)
                 self.board.push(move)
-
+                self.move_worked = True
+                self.turn += 1
         else:
         #If the pawn is BLACK
         #Does the same thing, but changes the color of the piece and the ID of the piece
-
             if promotion_piece == [410,300]:
                 #Turns the pawn into a Queen, Adds the Queen to the dictionary
                 self.ids['Block Queen'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -238,7 +288,8 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Block Queen'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=5)
                 self.board.push(move)
-
+                self.move_worked = True
+                self.turn += 1
             elif promotion_piece == [307.5, 400]:
                 #Turns the pawn into a Rook, Adds the Rook to the dictionary
                 self.ids['Ledt Black Rook'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -246,7 +297,8 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Ledt Black Rook'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=4)
                 self.board.push(move)
-
+                self.move_worked = True
+                self.turn += 1
             elif promotion_piece == [307.5, 300]:
                 #Turns the pawn into a Bishop, Adds the Bishop to the dictionary
                 self.ids['Ledt Black Bishop'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -254,7 +306,8 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Ledt Black Bishop'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=3)
                 self.board.push(move)
-
+                self.move_worked = True
+                self.turn += 1
             elif promotion_piece == [410, 400]:
                 #Turns the pawn into a Knight, Adds the Knight to the dictionary
                 self.ids['Ledt Black Knight'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
@@ -262,7 +315,43 @@ class Scatter_Text_widget(Screen):
                 position_dic[str(self.pos_chess)] = 'Ledt Black Knight'
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=2)
                 self.board.push(move)
+                self.turn += 1
+                self.move_worked = True
 
+        if self.move_worked == True:
+            #the AI can now move
+            self.board.BLACK = True
+
+            move_number = random.randint(0, len(list(self.board.legal_moves)) - 1)
+            move = list(self.board.legal_moves)[move_number]
+
+            self.board.push(move)
+            self.turn += 1
+            self.board.BLACK = False
+
+            '''
+            What the code does, but in a way for the Algorithm to do:
+            self.ids[self.piece_that_moved].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+
+            position_dic[str(self.chess_position_numerical)] = 'None'
+            position_dic[str(self.pos_chess)] = str(self.piece_that_moved)
+            '''
+
+            try:
+                piece_occupied = str(self.position_piece[str(str(move)[2] + str(move)[3])])
+                #Deletes the piece that was captured
+                self.ids[piece_occupied].pos = (1000,1000)
+
+            except KeyError:
+                pass
+            #Functionality for every move; moving the piece to the correct location and updating the dictionary
+            self.ids[position_dic[str(move)[0] + str(move)[1]]].pos = (conversion.to_number()[str(move)[2] + str(move)[3]][0], conversion.to_number()[str(move)[2] + str(move)[3]][1])
+
+            #The ID of the piece that moved
+            piece = position_dic[str(move)[0] + str(move)[1]]
+
+            position_dic[str(str(move)[0] + str(move)[1])] = 'None'
+            position_dic[str(str(move)[2] + str(move)[3])] = str(piece)
 #Builds the App
 class window(App):
     def build(self):
