@@ -16,6 +16,8 @@ from Visualize_the_Board.Data_Conversion.difference_for_letter import promotion_
 
 #Just for the Random AI
 import random
+import sys
+import os
 
 class Scatter_Text_widget(Screen):
     #The function of this class is to display a GUI for the user to use when playing against the AI
@@ -187,6 +189,8 @@ class Scatter_Text_widget(Screen):
             self.move_worked = False
 
         if self.move_worked == True:
+            if self.board.is_game_over(claim_draw=False) == True:
+                os.execv(sys.executable, ['python'] + sys.argv)
             #This is were the AI's inputs is visualized
             self.board.BLACK = True
 
@@ -352,6 +356,8 @@ class Scatter_Text_widget(Screen):
 
             position_dic[str(str(move)[0] + str(move)[1])] = 'None'
             position_dic[str(str(move)[2] + str(move)[3])] = str(piece)
+
+
 #Builds the App
 class window(App):
     def build(self):
