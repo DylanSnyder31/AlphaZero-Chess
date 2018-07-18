@@ -21,6 +21,9 @@ from Visualize_the_Board.Data_Conversion.difference_for_letter import promotion_
 #Just for the Random AI
 import random
 
+#Testing this out: (Waiting a few seconds before the program resets)
+import time
+
 class Scatter_Text_widget(Screen):
     #The function of this class is to display a GUI for the user to use when playing against the AI
     #In kivy, one window needs to have one class, that's why every visual piece of code is in this class
@@ -197,26 +200,35 @@ class Scatter_Text_widget(Screen):
         if self.piece_that_moved[0] == "W":
             if promotion_piece == [410,300]:
                 self.every_move_functionality(conversion, "Whire Queen")
+                self.promotion_number = 5
             elif promotion_piece == [307.5, 400]:
                 self.every_move_functionality(conversion, "Ledt White Rook")
+                self.promotion_number = 4
             elif promotion_piece == [307.5, 300]:
                 self.every_move_functionality(conversion, "Ledt White Bishop")
+                self.promotion_number = 3
             elif promotion_piece == [410, 400]:
                 self.every_move_functionality(conversion, 'Ledt White Knight')
+                self.promotion_number = 2
 
         else:
         #If the pawn is BLACK
         #Does the same thing, but changes the color of the piece and the ID of the piece
             if promotion_piece == [410,300]:
                 self.every_move_functionality(conversion, 'Block Queen')
+                self.promotion_number = 5
             elif promotion_piece == [307.5, 400]:
                 self.every_move_functionality(conversion, 'Ledt Black Rook')
+                self.promotion_number = 4
             elif promotion_piece == [307.5, 300]:
                 self.every_move_functionality(conversion, 'Ledt Black Bishop')
+                self.promotion_number = 3
             elif promotion_piece == [410, 400]:
                 self.every_move_functionality(conversion, 'Ledt Black Knight')
+                self.promotion_number = 2
 
-        move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=3)
+        move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=self.promotion_number)
+        print(move)
         self.board.push(move)
         self.move_worked = True
         self.turn += 1
@@ -281,6 +293,7 @@ class Scatter_Text_widget(Screen):
 
     def Agent_move(self, conversion):
         if self.board.is_game_over(claim_draw=False) == True:
+            time.sleep(15)
             os.execv(sys.executable, ['python'] + sys.argv)
         #This is were the AI's inputs is visualized
         self.board.BLACK = True
