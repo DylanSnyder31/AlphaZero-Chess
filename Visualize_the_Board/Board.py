@@ -120,6 +120,11 @@ class Scatter_Text_widget(Screen):
                     position_dic[str(self.chess_position_numerical)] = 'None'
                     position_dic[str(self.pos_chess)] = str(self.piece_that_moved)
 
+                    #Move the Trail
+                    self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                    self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
+
+
                 else:
                     #Checks to see if a promotion is occuring
                     not_a_promotion = True
@@ -225,6 +230,10 @@ class Scatter_Text_widget(Screen):
             position_dic[str(str(move)[0] + str(move)[1])] = 'None'
             position_dic[str(str(move)[2] + str(move)[3])] = str(piece)
 
+            #Move the Trail
+            self.ids["Trail One"].pos = (conversion.to_number()[str(move)[2] + str(move)[3]][0], conversion.to_number()[str(move)[2] + str(move)[3]][1])
+            self.ids["Trail Two"].pos = (conversion.to_number()[str(move)[0] + str(move)[1]][0], conversion.to_number()[str(move)[0] + str(move)[1]][1])
+
     def promotion(self, obj):
         conversion = convert_coordinates
         number_conversion = conversion_to_number
@@ -251,6 +260,9 @@ class Scatter_Text_widget(Screen):
                 self.ids['Whire Queen'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
                 position_dic[str(self.chess_position_numerical)] = 'None'
                 position_dic[str(self.pos_chess)] = 'Whire Queen'
+                #Move the Trail
+                self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=5)
                 self.board.push(move)
                 self.move_worked = True
@@ -260,6 +272,9 @@ class Scatter_Text_widget(Screen):
                 self.ids['Ledt White Rook'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
                 position_dic[str(self.chess_position_numerical)] = 'None'
                 position_dic[str(self.pos_chess)] = 'Ledt White Rook'
+                #Move the Trail
+                self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=4)
                 self.board.push(move)
                 self.move_worked = True
@@ -269,6 +284,9 @@ class Scatter_Text_widget(Screen):
                 self.ids['Ledt White Bishop'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
                 position_dic[str(self.chess_position_numerical)] = 'None'
                 position_dic[str(self.pos_chess)] = 'Ledt White Bishop'
+                #Move the Trail
+                self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=3)
                 self.board.push(move)
                 self.move_worked = True
@@ -290,6 +308,9 @@ class Scatter_Text_widget(Screen):
                 self.ids['Block Queen'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
                 position_dic[str(self.chess_position_numerical)] = 'None'
                 position_dic[str(self.pos_chess)] = 'Block Queen'
+                #Move the Trail
+                self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=5)
                 self.board.push(move)
                 self.move_worked = True
@@ -299,6 +320,9 @@ class Scatter_Text_widget(Screen):
                 self.ids['Ledt Black Rook'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
                 position_dic[str(self.chess_position_numerical)] = 'None'
                 position_dic[str(self.pos_chess)] = 'Ledt Black Rook'
+                #Move the Trail
+                self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=4)
                 self.board.push(move)
                 self.move_worked = True
@@ -308,6 +332,9 @@ class Scatter_Text_widget(Screen):
                 self.ids['Ledt Black Bishop'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
                 position_dic[str(self.chess_position_numerical)] = 'None'
                 position_dic[str(self.pos_chess)] = 'Ledt Black Bishop'
+                #Move the Trail
+                self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=3)
                 self.board.push(move)
                 self.move_worked = True
@@ -317,6 +344,9 @@ class Scatter_Text_widget(Screen):
                 self.ids['Ledt Black Knight'].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
                 position_dic[str(self.chess_position_numerical)] = 'None'
                 position_dic[str(self.pos_chess)] = 'Ledt Black Knight'
+                #Move the Trail
+                self.ids["Trail One"].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
+                self.ids["Trail Two"].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=2)
                 self.board.push(move)
                 self.turn += 1
@@ -357,6 +387,9 @@ class Scatter_Text_widget(Screen):
             position_dic[str(str(move)[0] + str(move)[1])] = 'None'
             position_dic[str(str(move)[2] + str(move)[3])] = str(piece)
 
+            #Move the Trail
+            self.ids["Trail One"].pos = (conversion.to_number()[str(move)[2] + str(move)[3]][0], conversion.to_number()[str(move)[2] + str(move)[3]][1])
+            self.ids["Trail Two"].pos = (conversion.to_number()[str(move)[0] + str(move)[1]][0], conversion.to_number()[str(move)[0] + str(move)[1]][1])
 
 #Builds the App
 class window(App):

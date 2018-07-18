@@ -15,6 +15,24 @@
 
     FloatLayout:
         #THIS CODE IS ONLy FOR A PAWN PROMOTION
+        Label:
+            id: Trail One
+            pos: 1000,1000
+            opacity: .8
+            canvas.before:
+                Rectangle:
+                    pos: self.pos
+                    size: 102.5,100
+                    source: 'Visualize_the_Board\Pictures\move_trail.png'
+        Label:
+            pos: 1000,1000
+            id: Trail Two
+            opacity: .8
+            canvas.before:
+                Rectangle:
+                    pos: self.pos
+                    size: 102.5,100
+                    source: 'Visualize_the_Board\Pictures\move_trail.png'
         Scatter:
             id: Whire Queen
             size_hint: None, None
