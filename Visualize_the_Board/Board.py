@@ -295,22 +295,19 @@ class Scatter_Text_widget(Screen):
         if self.board.is_game_over(claim_draw=False) == True:
             time.sleep(15)
             os.execv(sys.executable, ['python'] + sys.argv)
-        #This is were the AI's inputs is visualized
+        #This is where the AI's inputs is visualized
         self.board.BLACK = True
 
+        ########################################################################
         move_number = random.randint(0, len(list(self.board.legal_moves)) - 1)
         move = list(self.board.legal_moves)[move_number]
 
         self.board.push(move)
         self.turn += 1
         self.board.BLACK = False
-
+        #######################################################################
         '''
-        What the code does, but in a way for the Algorithm to do:
-        self.ids[self.piece_that_moved].pos = (conversion.to_number()[self.pos_chess][0], conversion.to_number()[self.pos_chess][1])
-
-        position_dic[str(self.chess_position_numerical)] = 'None'
-        position_dic[str(self.pos_chess)] = str(self.piece_that_moved)
+        This will be needed even with the Actual Algorithm, to visualize the Move
         '''
         try:
             piece_occupied = str(self.position_piece[str(str(move)[2] + str(move)[3])])
