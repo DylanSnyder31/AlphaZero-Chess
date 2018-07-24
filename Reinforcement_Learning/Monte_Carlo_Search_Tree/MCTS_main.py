@@ -1,4 +1,5 @@
 import chess
+import random
 '''
 This is the MCTS algorithm implemented in Python
 
@@ -10,8 +11,14 @@ standard implementation is as follows:
 '''
 
 class MCTS():
+    '''
+    NEED TO RETURN A MOVE:
+
+    Self-play. The best current player αθ∗, as selected by the evaluator, is used to  generate data. In each iteration, αθ∗ plays 25,000 games of self-play, using 1,600  simulations of MCTS to select each move (this requires approximately 0.4 s per search). For the first 30 moves of each game, the temperature is set to τ =   1;  this selects moves proportionally to their visit count in MCTS, and ensures a diverse set of positions are encountered. For the remainder of the game, an infinitesimal temperature is used, τ→ 0. Additional exploration is achieved by adding Dirichlet noise to the prior probabilities in the root node s0, specifically P(s, a) =   (1 −   ε)pa +   εηa, where η ∼   Dir(0.03)  and  ε =  0.25; this noise ensures that all moves may be tried, but the search may still overrule bad moves. In order to save computation, clearly lost games are resigned. The resignation threshold vresign is selected automatically to keep the fraction of false positives (games that could have been won if AlphaGo had not resigned) below 5%. To measure false posi-tives, we disable resignation in 10% of self-play games and play until termination.
+    '''
 
     def __init__(self, state):
+        self.visit_history = []
 
         self.iterations = 0
 
@@ -23,21 +30,22 @@ class MCTS():
 
         #The dictionary for edges
         self.edges = {}
+        self.edges[self.game_state, 0] = None
 
         #The dictionary for Nodes
         self.nodes = {}
 
         #Define what layer the observation is currently in
-        self.layer = 0
+        self.layer = 1
 
     def resource_limits(self):
 
-        #Expands if the tree is just one node
-        if len(self.edges) == 0:
-            self.expand_leaf_node()
+        #Expands if the tree is just one node (The base positions)
+        if len(self.edges) == 1:
+            self.simulate_leaf_node()
 
         #This will loop until MCTS has ran for 800 iterations
-        while self.iterations <= 800:
+        while self.iterations <= 1600:
             #Since this is a new iteration, the history is new as well
             self.visit_history = []
 
@@ -56,8 +64,10 @@ class MCTS():
             #Sadly this will take O(n) time, because the list will not have been sorted
             self.index_of_highest = 0
             counter = 0
+            largest_value = 0
             for i in self.list_of_values:
                 if i > largest_value:
+                    largest_value = i
                     self.index_of_highest = counter
                 counter += 0
 
@@ -65,7 +75,7 @@ class MCTS():
             self.visit_history.append([self.observing_state, self.index_of_highest])
 
             #Change the observing state to the state with the highest Q + U
-            self.observing_state = self.edges[self.observing_state][self.index_of_highest][4]
+            self.observing_state = self.edges[self.observing_state, self.layer - 1][self.index_of_highest][4]
 
             #We traversed down one more layer through the Tree
             self.layer += 1
@@ -76,8 +86,11 @@ class MCTS():
         If that Node has no edges, then it must be a Leaf Node
         else it cannot be a Leaf Node
         '''
+
         try:
-            self.list_of_values = list(self.edges[self.observing_state, self.layer])
+            print(self.edges[self.observing_state, self.layer - 1])
+            print(self.edges)
+            self.list_of_values = list(self.edges[self.observing_state, self.layer - 1])
             return False
         except TypeError:
             #This is when the Node is a Leaf
@@ -92,8 +105,10 @@ class MCTS():
 
         '''
         CALL THE DEEP NEURAL NETWORK
+        Do we do this before or after or during getting the children?
         '''
         #self.V, self.P =
+        self.V, self.P = 10, .3
 
         #Expand the Leaf with children
         #Don't visit the children
@@ -107,7 +122,6 @@ class MCTS():
 
         #Loops through each legal move from this state
         for i in list(board.legal_moves):
-
             #This is the legal move chosen
             move = chess.Move.from_uci(str(i))
 
@@ -126,9 +140,7 @@ class MCTS():
             #Adds a dictionary so we can add the possible moves
             if self.edges[self.observing_state, self.layer - 1] == None:
                 self.edges[self.observing_state, self.layer - 1] = {}
-
-
-            total_number = self.calculate_U()
+            probability = self.calculate_U()
 
             #Adds the legal moves to the tree, underneath the current node
             #Assigns their values 0 because they have never been explored
@@ -140,8 +152,8 @@ class MCTS():
 
     def backpropagation(self):
         #This will return all values up the hierarchy
-
         for i in self.visit_history:
+
             U = self.calculate_U()
             #Re-calculates the Q + U and re-key the dictionary
             self.edges[i[0]][U] = self.edges.pop([i[0]][i[1]])
@@ -173,9 +185,9 @@ class MCTS():
             total_number += self.edges[i[0][1][0]]
 
         total_number = (total_number**.5)/ (1)
-        probability = self.P * total_number
+        probability = self.P * random.randint(0,200)
         # In the paper they multiply by Cpuct, and I couldn't find the value of
         # Cpuct, but multiplying everything by the same number will not do anything, just
         # cause inflation/deflation of the numbers; So I do not multiply by Cpuct
 
-        return total_number
+        return probability
