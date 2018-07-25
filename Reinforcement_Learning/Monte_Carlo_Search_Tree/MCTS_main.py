@@ -53,7 +53,15 @@ class MCTS():
             self.search_for_leaf_node()
             #Update the iteration number
             self.iterations += 1
+            print(self.iterations)
 
+        chose_move = list(self.edges[self.game_state, 0])
+        largest_value = 0
+        for i in chose_move:
+            if i > largest_value:
+                largest_value = i
+
+        return self.edges[self.game_state, 0][largest_value][5]
     def search_for_leaf_node(self):
         #This is the Selection step
         #The goal of this step is to find a leaf node, using the PUCT equation
@@ -133,7 +141,7 @@ class MCTS():
 
             #Adds the legal moves to the tree, underneath the current node
             #Assigns their values 0 because they have never been explored
-            self.edges[self.observing_state, self.layer - 1][probability] = [ 0, 0, 0, self.P, state_after_move ]
+            self.edges[self.observing_state, self.layer - 1][probability] = [ 0, 0, 0, self.P, state_after_move, str(i) ]
 
         #backpropagate the values up the tree
         self.backpropagation()
@@ -143,11 +151,7 @@ class MCTS():
         #This will return all values up the hierarchy
         for i in self.visit_history:
             U = self.calculate_U()
-            print(self.edges)
-            print(U)
             #Re-calculates the Q + U and re-key the dictionary
-            print("jjjjjjjj")
-            print(i[0])
             value = self.edges[i[0], i[2]][i[1]]
 
             self.edges[i[0], i[2]][int(U)] = value
