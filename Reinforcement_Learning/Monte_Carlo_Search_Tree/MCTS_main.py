@@ -52,7 +52,7 @@ class MCTS():
             #Run one iteration of the MCTS
             self.search_for_leaf_node()
             #Update the iteration number
-            self.iteration += 1
+            self.iterations += 1
 
     def search_for_leaf_node(self):
         #This is the Selection step
@@ -143,12 +143,18 @@ class MCTS():
         #This will return all values up the hierarchy
         for i in self.visit_history:
             U = self.calculate_U()
+            print(self.edges)
+            print(U)
             #Re-calculates the Q + U and re-key the dictionary
-            self.edges[i[0]][U] = self.edges.pop([i[0]][i[1]])
+            print("jjjjjjjj")
+            print(i[0])
+            value = self.edges[i[0], i[2]][i[1]]
 
+            self.edges[i[0], i[2]][int(U)] = value
+            self.edges[i[0], i[2]].pop(i[1])
             # i = [obverved state, index_of_highest (for this state)]
             # edge = self.edge[observed_state][index_of_highest
-            edge = self.edges[i[0]][U]
+            edge = self.edges[i[0], i[2]][int(U)]
             # edge is now equal to the value of the edge
             # edge = [N, W, Q, P, state]
 
@@ -169,13 +175,15 @@ class MCTS():
         # The equation for U is on the top right of page 8 in their first paper
         # ( https://www.nature.com/articles/nature24270.epdf?author_access_token=VJXbVjaSHxFoctQQ4p2k4tRgN0jAjWel9jnR3ZoTv0PVW4gB86EEpGqTRDtpIz-2rmo8-KG06gqVobU5NSCFeHILHcVFUeMsbvwS-lxjqQGg98faovwjxeTUgZAUMnRQ )
         total_number = 0
-        print(self.visit_history)
         for i in self.visit_history:
             #[self.observing_state, self.index_of_highest, self.layer]
             total_number = self.edges[ (i[ 0 ], i[ 2 ]) ][ i[ 1 ]][ 0 ]
 
         total_number = (total_number**.5)/ (1)
-        probability = self.P * random.randint(0,200)
+        if self.P * total_number in self.edges[self.observing_state, self.layer -1]:
+            probability = self.P * random.random() * 1000
+        else:
+            probability = self.P * total_number *100
         # In the paper they multiply by Cpuct, and I couldn't find the value of
         # Cpuct, but multiplying everything by the same number will not do anything, just
         # cause inflation/deflation of the numbers; So I do not multiply by Cpuct
