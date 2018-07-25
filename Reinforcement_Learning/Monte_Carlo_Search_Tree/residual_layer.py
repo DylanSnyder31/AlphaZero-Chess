@@ -1,3 +1,6 @@
+from Reinforcement_Learning.Monte_Carlo_Search_Tree.convolutional_layer import convolution
+import torch
+import torch.nn as nn
 '''
 This is the residual layer to the NN, the structure is:
 
@@ -7,24 +10,20 @@ Input -> 256 convolutional filters (3x3) -> Batch Normalization -> Rectifier non
 
 class residual():
 
-    def __init__(self):
-        pass
+    def __init__(self, residu):
+        self.resid = residu
+        self.skip = self.resid
+        self.convo = convolution()
 
-    #Call the convolutional_layer (full)
+    def main(self):
 
-    #256 Convolutional Layers (3x3)
+        self.resid = self.convo.main()
 
-    #Batch Normalization
+        self.resid = self.convo.layer_convolutional()
+        self.resid = self.convo.batch_normalization()
 
-    #Skip Connection
+        self.resid += self.skip
 
-    #rectifier non linearity
+        self.resid = self.convo.rectifier_non_linearity()
 
-    self.conv1 = nn.Conv2d(channel, channel, kernel_size=3, padding=1)
-    self.conv1_bn = nn.BatchNorm2d(channel)
-    self.conv1_relu = nn.ReLU(inplace=True)
-    
-    self.conv2 = nn.Conv2d(channel, channel, kernel_size=3, padding=1)
-    self.conv2_bn = nn.BatchNorm2d(channel)
-    # forward엔 여기에 skip connection 추가 필요
-    self.conv2_relu = nn.ReLU(inplace=True)
+        return self.resid

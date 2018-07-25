@@ -59,23 +59,18 @@ class MCTS():
         #The goal of this step is to find a leaf node, using the PUCT equation
         while self.if_leaf_node() == False:
 
-            print(self.list_of_values)
             #Get the branch with the highest Q + U
             #Sadly this will take O(n) time, because the list will not have been sorted
-            self.index_of_highest = 0
-            counter = 0
             largest_value = 0
             for i in self.list_of_values:
+
                 if i > largest_value:
                     largest_value = i
-                    self.index_of_highest = counter
-                counter += 0
 
-            #Adds to the visit history
-            self.visit_history.append([self.observing_state, self.index_of_highest])
-
+            #Adds the final edge to the history
+            self.visit_history.append([self.observing_state, largest_value, self.layer -1])
             #Change the observing state to the state with the highest Q + U
-            self.observing_state = self.edges[self.observing_state, self.layer - 1][self.index_of_highest][4]
+            self.observing_state = self.edges[self.observing_state, self.layer - 1][largest_value][4]
 
             #We traversed down one more layer through the Tree
             self.layer += 1
@@ -88,15 +83,9 @@ class MCTS():
         '''
 
         try:
-            print(self.edges[self.observing_state, self.layer - 1])
-            print(self.edges)
             self.list_of_values = list(self.edges[self.observing_state, self.layer - 1])
             return False
         except TypeError:
-            #This is when the Node is a Leaf
-
-            #Adds the final edge to the history
-            self.visit_history.append([self.observing_state, index_of_highest])
 
             self.simulate_leaf_node()
 
@@ -153,7 +142,6 @@ class MCTS():
     def backpropagation(self):
         #This will return all values up the hierarchy
         for i in self.visit_history:
-
             U = self.calculate_U()
             #Re-calculates the Q + U and re-key the dictionary
             self.edges[i[0]][U] = self.edges.pop([i[0]][i[1]])
@@ -181,8 +169,10 @@ class MCTS():
         # The equation for U is on the top right of page 8 in their first paper
         # ( https://www.nature.com/articles/nature24270.epdf?author_access_token=VJXbVjaSHxFoctQQ4p2k4tRgN0jAjWel9jnR3ZoTv0PVW4gB86EEpGqTRDtpIz-2rmo8-KG06gqVobU5NSCFeHILHcVFUeMsbvwS-lxjqQGg98faovwjxeTUgZAUMnRQ )
         total_number = 0
+        print(self.visit_history)
         for i in self.visit_history:
-            total_number += self.edges[i[0][1][0]]
+            #[self.observing_state, self.index_of_highest, self.layer]
+            total_number = self.edges[ (i[ 0 ], i[ 2 ]) ][ i[ 1 ]][ 0 ]
 
         total_number = (total_number**.5)/ (1)
         probability = self.P * random.randint(0,200)
