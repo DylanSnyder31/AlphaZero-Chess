@@ -11,22 +11,21 @@ Fully Connected Layer (to Scalar) -> tahn non-linearity
 
 class value():
 
-    def __init__(self):
+    def main(self, channel):
         self.convo = convolutional()
 
-    def main(self):
         self.value_head = nn.Conv2d(channel, 1, kernel_size=1)
 
-        self.value_head = self.convo.batch_normalization()
+        self.value_head = self.convo.batch_normalization(self.value_head)
 
-        self.value_head = self.convo.rectifier_non_linearity()
+        self.value_head = self.convo.rectifier_non_linearity(self.value_head)
 
         self.value_head = nn.Linear(9, channel)
 
-        self.value_head = self.convo.rectifier_non_linearity()
+        self.value_head = self.convo.rectifier_non_linearity(self.value_head)
 
         self.value_head = nn.Linear(channel, 1)
 
-        self.value_head = nn.Tanh()
+        self.value_head = nn.Tanh(self.value_head)
 
         return self.value_head

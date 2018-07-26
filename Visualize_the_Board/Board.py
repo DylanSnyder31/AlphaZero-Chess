@@ -1,6 +1,8 @@
 #Import to reset the program when the game ends
 import sys
 import os
+from Reinforcement_Learning.Monte_Carlo_Search_Tree.MCTS_main import MCTS
+
 
 #Import Chess module
 import chess
@@ -132,8 +134,6 @@ class Scatter_Text_widget(Screen):
                 self.ids[self.piece_that_moved].pos = (conversion.to_number()[self.chess_position_numerical][0], conversion.to_number()[self.chess_position_numerical][1])
                 self.move_worked = False
 
-            print(self.board)
-
         else:
             self.move_worked = False
 
@@ -228,7 +228,6 @@ class Scatter_Text_widget(Screen):
                 self.promotion_number = 2
 
         move = chess.Move(number_conversion[str(self.chess_position_numerical)] - 1, number_conversion[str(self.pos_chess)] - 1, promotion=self.promotion_number)
-        print(move)
         self.board.push(move)
         self.move_worked = True
         self.turn += 1
@@ -262,7 +261,6 @@ class Scatter_Text_widget(Screen):
         #Checks were the castling is happening, and then moves the correct rook then
         if king_side_castling == True:
             if str(str(pos_chess)[1]) == str(1):
-                print(self.ids['Right White Rook'].pos)
                 self.ids['Right White Rook'].pos = (conversion.to_number()['f1'][0], conversion.to_number()['f1'][1])
                 position_dic['h1'] = 'None'
                 position_dic['f1'] = 'Right White Rook'
@@ -299,16 +297,21 @@ class Scatter_Text_widget(Screen):
         self.board.BLACK = True
 
         ########################################################################
-        move_number = random.randint(0, len(list(self.board.legal_moves)) - 1)
-        move = list(self.board.legal_moves)[move_number]
-
-        self.board.push(move)
-        self.turn += 1
-        self.board.BLACK = False
+        monte_carlo = MCTS(str(self.board.fen()))
+        for i in list(self.board.legal_moves):
+            if str(i) == monte_carlo.resource_limits():
+                move = i
         #######################################################################
+
+
+
         '''
         This will be needed even with the Actual Algorithm, to visualize the Move
         '''
+        self.board.push(move)
+        self.turn += 1
+        self.board.BLACK = False
+
         try:
             piece_occupied = str(self.position_piece[str(str(move)[2] + str(move)[3])])
             #Deletes the piece that was captured

@@ -10,14 +10,13 @@ Fully Connected Layer (move logit probabilities)
 
 class policy():
 
-    def __init__(self):
+    def main(self, channel):
         self.convo = convolutional()
 
-    def main(self):
         self.policy_head = nn.Conv2d(channel, 2, kernel_size=1)
 
-        self.policy_head = self.convo.batch_normalization()
-        self.policy_head = self.convo.rectifier_non_linearity()
+        self.policy_head = self.convo.batch_normalization(self.policy_head)
+        self.policy_head = self.convo.rectifier_non_linearity(self.policy_head)
 
         self.policy_head = nn.Linear(18, 9)
         self.policy_head = nn.Softmax(dim=1)

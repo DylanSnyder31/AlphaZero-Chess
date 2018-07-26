@@ -9,10 +9,6 @@ Input -> 256 convolutional filters (3x3) -> Batch Normalization -> Rectifier non
 
 class convolution():
 
-    def __init__(self, board_height, board_width):
-
-        pass
-
     def layer_convolutional(self, channel):
         self.conv1 = nn.Conv2d(5, channel, kernel_size=3, padding=1)
         return self.conv1
@@ -29,5 +25,4 @@ class convolution():
         self.conv1 = self.layer_convolutional(state)
         self.conv_bn = self.batch_normalization(self.conv1)
         self.conv_relu = self.rectifier_non_linearity(self.conv_bn)
-
         return self.conv_relu

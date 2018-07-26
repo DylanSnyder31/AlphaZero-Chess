@@ -23,21 +23,18 @@ class architecture():
         self.finished_convolutional = self.convolution.main(self.state)
         return self.finished_convolutional
 
-    def residual_layers(self, con):
-
-        self.RESIDUAL = con
+    def residual_layers(self):
+        self.RESIDUAL = self.finished_convolutional
         for i in range(40):
-
             self.RESIDUAL = self.residual.main(self.RESIDUAL)
-
         return self.RESIDUAL
 
     def both_heads(self):
         V_val = self.head_value.main(self.finished_residual)
         P_val = self.head_policy.main(self.finished_residual)
-
         return p_val, V_val
+
     def main(self):
         self.finished_convolutional = self.layer_convolutional()
-        self.finished_residual = self.residual_layers(self.finished_convolutional)
+        self.finished_residual = self.residual_layers()
         self.P_value, self.V_value = self.both_heads()

@@ -10,20 +10,20 @@ Input -> 256 convolutional filters (3x3) -> Batch Normalization -> Rectifier non
 
 class residual():
 
-    def __init__(self, residu):
+
+    def main(self, residu):
         self.resid = residu
         self.skip = self.resid
+
         self.convo = convolution()
 
-    def main(self):
+        self.resid = self.convo.main(self.resid)
 
-        self.resid = self.convo.main()
-
-        self.resid = self.convo.layer_convolutional()
-        self.resid = self.convo.batch_normalization()
+        self.resid = self.convo.layer_convolutional(self.resid)
+        self.resid = self.convo.batch_normalization(self.resid)
 
         self.resid += self.skip
 
-        self.resid = self.convo.rectifier_non_linearity()
+        self.resid = self.convo.rectifier_non_linearity(self.resid)
 
         return self.resid

@@ -2,10 +2,8 @@ import chess
 import random
 '''
 This is the MCTS algorithm implemented in Python
-
 The differences between this MCTS (The Alphazero algorithm) and a
 standard implementation is as follows:
-
     1. Rollouts are replaced by fetching predictions from the Neural Network
     2. The equation, PUCT, replaces UCB1
 '''
@@ -13,7 +11,6 @@ standard implementation is as follows:
 class MCTS():
     '''
     NEED TO RETURN A MOVE:
-
     Self-play. The best current player αθ∗, as selected by the evaluator, is used to  generate data. In each iteration, αθ∗ plays 25,000 games of self-play, using 1,600  simulations of MCTS to select each move (this requires approximately 0.4 s per search). For the first 30 moves of each game, the temperature is set to τ =   1;  this selects moves proportionally to their visit count in MCTS, and ensures a diverse set of positions are encountered. For the remainder of the game, an infinitesimal temperature is used, τ→ 0. Additional exploration is achieved by adding Dirichlet noise to the prior probabilities in the root node s0, specifically P(s, a) =   (1 −   ε)pa +   εηa, where η ∼   Dir(0.03)  and  ε =  0.25; this noise ensures that all moves may be tried, but the search may still overrule bad moves. In order to save computation, clearly lost games are resigned. The resignation threshold vresign is selected automatically to keep the fraction of false positives (games that could have been won if AlphaGo had not resigned) below 5%. To measure false posi-tives, we disable resignation in 10% of self-play games and play until termination.
     '''
 
