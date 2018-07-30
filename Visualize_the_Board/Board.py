@@ -1,9 +1,8 @@
 #Import to reset the program when the game ends
 import sys
 import os
-from Reinforcement_Learning.Monte_Carlo_Search_Tree.MCTS_main import MCTS
-
-
+from Reinforcement_Learning.Monte_Carlo_Search_Tree.MCTS_main import MCTS_eval
+from Reinforcement_Learning.Monte_Carlo_Search_Tree.deep_structure import PolicyValueNet
 #Import Chess module
 import chess
 
@@ -297,10 +296,16 @@ class Scatter_Text_widget(Screen):
         self.board.BLACK = True
 
         ########################################################################
-        monte_carlo = MCTS(str(self.board.fen()))
-        for i in list(self.board.legal_moves):
-            if str(i) == monte_carlo.resource_limits():
-                move = i
+        b = self.board
+        policy_value_net = PolicyValueNet(8, 8)
+        AI_player = MCTS_eval(policy_value_net.policy_value_fn,
+                                      c_puct=5,
+                                      n_playout=400,
+                                      is_selfplay=0)
+        move, move_probs = AI_player.get_action(b,
+                                             temp=1e-3,
+                                             return_prob=1)
+
         #######################################################################
 
 
