@@ -145,21 +145,21 @@ class Node(object):
         '''
         return max(self.children.items(), key=lambda act_node: act_node[1].node_value(Cpuct))
 
-    def leaf_expansion(self, action_priors):
+    def leaf_expansion(self, move_history):
         '''
         The job of this function is to expand the current selected leaf node
         '''
-        for move, probability in action_priors:
+        for move, probability in move_history:
             if move not in self.children:
                 self.children[move] = Node(self, probability)
 
-    def node_value(self, c_puct):
+    def node_value(self, Cpuct):
         '''
         The job of this function is to get the value for the node
         In alphazero this is denoted by the equation : {INSERT EQUATION}
         '''
 
-        self.U = (c_puct * self.P * np.sqrt(self.parent.N) / (1 + self.N))
+        self.U = (Cpuct * self.P * np.sqrt(self.parent.N) / (1 + self.N))
         return self.Q + self.U
 
     def update_leaf_node(self, leaf_value):
@@ -207,6 +207,6 @@ def softmax(x):
     '''
     This is the softmax function for Alphazero
     '''
-    probs = np.exp(x - np.max(x))
-    probs /= np.sum(probs)
-    return probs
+    probabilities = np.exp(x - np.max(x))
+    probabilities /= np.sum(probabilities)
+    return probabilities

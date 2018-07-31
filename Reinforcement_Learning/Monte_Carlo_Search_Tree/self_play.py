@@ -57,14 +57,17 @@ class start():
                 move, probability_of_moves = player.get_action(self.board, temperature = temperature, return_prob = 1)
 
                 states.append(self.current_state(self.board))
+
                 mcts_probs.append(probability_of_moves)
                 move = chess.Move.from_uci(str(move))
                 self.board.push(move)
+
                 end, winner = self.results(self.board, self.board.result())
                 if end:
                     winner_outcome = np.zeros(len(live_agents))
                     if winner != -1:
                         winner_outcome[np.array(live_agents) == winner] = 1.0
                         winner_outcome[np.array(live_agents) != winner] = -1.0
+
                     player.reset_player()
                     return winner, zip(states, mcts_probs, winner_outcome)
