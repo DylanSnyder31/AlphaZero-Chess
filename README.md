@@ -8,8 +8,7 @@ This is a Python implemenatation of Google Deepmind's AlpahZero. This project us
 pip install -r requirements.txt
 ```
 #### Training 
-[Install](https://developer.nvidia.com/cuda-downloads) CUDA
-To continue training the model do:
+To continue training model run:
 ```
 python Train_Agent.py
 ```
