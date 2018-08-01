@@ -35,10 +35,10 @@ class Train_Network():
 
         ''' Change to FALSE if you want to start training from scratch '''
         if True:
-            self.Neural_Net = Neural_Network(8,8, file=r'C:\Users\Dylan Snyder\Desktop\Machine_Learning_Ches\Reinforcement_Learning\Monte_Carlo_Search_Tree\best_policy.model')
+            self.Neural_Net = Neural_Network()
         else:
             # start training from a new policy-value net
-            self.Neural_Net = Neural_Network(8, 8)
+            self.Neural_Net = Neural_Network()
 
         self.agent = agent_MCTS(self.Neural_Net.policy_value_fn, is_selfplay=1)
 
